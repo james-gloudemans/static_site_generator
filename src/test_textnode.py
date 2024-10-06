@@ -1,6 +1,5 @@
 import unittest
 
-from leafnode import LeafNode
 from textnode import TextNode
 
 
