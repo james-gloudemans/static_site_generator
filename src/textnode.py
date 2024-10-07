@@ -14,6 +14,12 @@ class TextNode:
         'image',
     ))
 
+    _text_type_sep: dict[str, str] = {
+        '**': 'bold',
+        '*': 'italic',
+        '`': 'code',
+    }
+
     def __init__(self, text: str, text_type: str, url: Optional[str] = None) -> "TextNode":
         self.text = text
         if text_type not in self._text_types:
