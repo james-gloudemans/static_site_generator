@@ -13,7 +13,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
             TextNode("code block", 'code'),
             TextNode(" word", 'text'),
         ]
-        self.assertEqual(split_nodes_delimiter([node,], '`'), result)
+        self.assertListEqual(split_nodes_delimiter([node,], '`'), result)
 
     def test_bold_centered(self):
         node = TextNode("This is text with a **bold** word", 'text')
@@ -22,7 +22,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
             TextNode("bold", 'bold'),
             TextNode(" word", 'text'),
         ]
-        self.assertEqual(split_nodes_delimiter([node,], '**'), result)
+        self.assertListEqual(split_nodes_delimiter([node,], '**'), result)
 
     def test_italic_centered(self):
         node = TextNode("This is text with an *italic* word", 'text')
@@ -31,7 +31,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
             TextNode("italic", 'italic'),
             TextNode(" word", 'text'),
         ]
-        self.assertEqual(split_nodes_delimiter([node,], '*'), result)
+        self.assertListEqual(split_nodes_delimiter([node,], '*'), result)
 
     def test_multiple_all_same(self):
         node = TextNode("This text has *two* italic *words* omg", 'text')
@@ -42,7 +42,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
             TextNode("words", 'italic'),
             TextNode(" omg", 'text')
         ]
-        self.assertEqual(split_nodes_delimiter([node,], '*'), result)
+        self.assertListEqual(split_nodes_delimiter([node,], '*'), result)
 
     def test_split_at_beginning(self):
         node = TextNode("*This* text has an italic word at the beginning", 'text')
@@ -50,8 +50,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
             TextNode("This", 'italic'),
             TextNode(" text has an italic word at the beginning", 'text')
         ]
-        print(split_nodes_delimiter([node,], '*'))
-        self.assertEqual(split_nodes_delimiter([node,], '*'), result)
+        self.assertListEqual(split_nodes_delimiter([node,], '*'), result)
 
     def test_split_at_end(self):
         node = TextNode("This text has an italic word at the *end*", 'text')
@@ -59,7 +58,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
             TextNode("This text has an italic word at the ", 'text'),
             TextNode("end", 'italic')
         ]
-        self.assertEqual(split_nodes_delimiter([node,], '*'), result)
+        self.assertListEqual(split_nodes_delimiter([node,], '*'), result)
 
     def test_split_with_other_type(self):
         node = TextNode("This text has both a **bold** and an *italic* word", 'text')
@@ -68,7 +67,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
             TextNode("italic", 'italic'),
             TextNode(" word", 'text')
         ]
-        self.assertEqual(split_nodes_delimiter([node,], '*'), result)
+        self.assertListEqual(split_nodes_delimiter([node,], '*'), result)
 
     def test_split_with_other_type_nearby(self):
         node = TextNode("This text has **bold** *and italic* pieces next to each other", 'text')
@@ -77,7 +76,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
             TextNode("and italic", 'italic'),
             TextNode(" pieces next to each other", 'text')
         ]
-        self.assertEqual(split_nodes_delimiter([node,], '*'), result)
+        self.assertListEqual(split_nodes_delimiter([node,], '*'), result)
 
     def test_split_with_multiple_input_nodes(self):
         nodes = [
@@ -92,7 +91,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
             TextNode("node", 'italic'),
             TextNode(" 2", 'text')
         ]
-        self.assertEqual(split_nodes_delimiter(nodes, '*'), result)
+        self.assertListEqual(split_nodes_delimiter(nodes, '*'), result)
 
     def test_invalid_markdown(self):
         node = TextNode("This is invalid *markdown", 'text')

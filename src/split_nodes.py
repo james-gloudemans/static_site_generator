@@ -28,3 +28,25 @@ def split_nodes_delimiter(nodes: list[TextNode], sep: str) -> list[TextNode]:
             if text:
                 result.append(TextNode(text, text_type))
     return result
+
+
+## Below is from the Solution on boot.dev.  It fails two of the tests.
+# def split_nodes_delimiter(old_nodes, delimiter):
+#     new_nodes = []
+#     for old_node in old_nodes:
+#         if old_node.text_type != 'text':
+#             new_nodes.append(old_node)
+#             continue
+#         split_nodes = []
+#         sections = old_node.text.split(delimiter)
+#         if len(sections) % 2 == 0:
+#             raise ValueError("Invalid markdown, formatted section not closed")
+#         for i in range(len(sections)):
+#             if sections[i] == "":
+#                 continue
+#             if i % 2 == 0:
+#                 split_nodes.append(TextNode(sections[i], 'text'))
+#             else:
+#                 split_nodes.append(TextNode(sections[i], old_node._text_type_sep[delimiter]))
+#         new_nodes.extend(split_nodes)
+#     return new_nodes
