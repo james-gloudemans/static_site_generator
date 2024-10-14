@@ -50,4 +50,10 @@ def split_nodes_delimiter(nodes: list[TextNode], sep: str) -> list[TextNode]:
 #             else:
 #                 split_nodes.append(TextNode(sections[i], old_node._text_type_sep[delimiter]))
 #         new_nodes.extend(split_nodes)
-#     return new_nodes
+#     return new_nodes+
+
+def extract_markdown_images(text: str) -> list[tuple[str, str]]:
+    return re.findall(r'!\[([\w\s]+)\]\(([^\)]+)\)', text)
+
+def extract_markdown_links(text: str) -> list[tuple[str, str]]:
+    return re.findall(r'[^!]{0,1}\[([\w\s]+)\]\(([^\)]+)\)', text)

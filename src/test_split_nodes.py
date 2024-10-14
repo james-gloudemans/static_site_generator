@@ -2,7 +2,7 @@ import functools
 import unittest
 
 from textnode import TextNode
-from split_nodes import split_nodes_delimiter
+from split_nodes import split_nodes_delimiter, extract_markdown_images, extract_markdown_links
 
 class TestSplitNodesDelimiter(unittest.TestCase):
 
@@ -97,3 +97,37 @@ class TestSplitNodesDelimiter(unittest.TestCase):
         node = TextNode("This is invalid *markdown", 'text')
         split_nodes_callable = functools.partial(split_nodes_delimiter, nodes=[node,], sep='*')
         self.assertRaises(ValueError, split_nodes_callable)
+
+class TestImagesAndLinks(unittest.TestCase):
+
+    def test_images_simple(self):
+        text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+        self.assertListEqual(extract_markdown_images(text),
+                             [
+                                 ("rick roll", "https://i.imgur.com/aKaOqIh.gif"),
+                                 ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg"),
+                             ])
+    
+    def test_links_simple(self):
+        text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
+        self.assertListEqual(extract_markdown_links(text),
+                             [
+                                 ("to boot dev", "https://www.boot.dev"),
+                                 ("to youtube", "https://www.youtube.com/@bootdotdev"),
+                             ])
+        
+    def test_images_at_beginning(self):
+        text = "![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+        self.assertListEqual(extract_markdown_images(text),
+                             [
+                                 ("rick roll", "https://i.imgur.com/aKaOqIh.gif"),
+                                 ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg"),
+                             ])
+        
+    def test_links_at_beginning(self):
+        text = "[to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
+        self.assertListEqual(extract_markdown_links(text),
+                             [
+                                 ("to boot dev", "https://www.boot.dev"),
+                                 ("to youtube", "https://www.youtube.com/@bootdotdev"),
+                             ])
