@@ -5,6 +5,7 @@ from leafnode import LeafNode
 
 class TextNode:
 
+    # I don't like these next 2, they should be redone.  Could use a conf.py or similar?
     _text_types: set[str] = set((
         'text',
         'bold',

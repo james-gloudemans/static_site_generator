@@ -19,6 +19,7 @@ def split_nodes_delimiter(nodes: list[TextNode], sep: str) -> list[TextNode]:
             result.append(node)
             continue
         if sep == '*':
+            # This matches exactly one `*` and not `**`
             sections = re.split(r'(?<!\*)\*(?!\*)', node.text)
         else:
             sections = node.text.split(sep)
