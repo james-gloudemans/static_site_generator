@@ -1,7 +1,17 @@
 import itertools
 import re
+from typing import Iterator
 
 from textnode import TextNode
+
+def text_to_textnodes(text: str) -> list[TextNode]:
+    result: list[TextNode] = [TextNode(text, 'text'),]
+    result = split_nodes_delimiter(result, '**')
+    result = split_nodes_delimiter(result, '*')
+    result = split_nodes_delimiter(result, '`')
+    result = split_nodes_image(result)
+    result = split_nodes_link(result)
+    return result
 
 def split_nodes_delimiter(nodes: list[TextNode], sep: str) -> list[TextNode]:
     """Takes a list of nodes and splits them into a new list of nodes based on `sep`
@@ -50,10 +60,42 @@ def split_nodes_delimiter(nodes: list[TextNode], sep: str) -> list[TextNode]:
 #             else:
 #                 split_nodes.append(TextNode(sections[i], old_node._text_type_sep[delimiter]))
 #         new_nodes.extend(split_nodes)
-#     return new_nodes+
+#     return new_nodes
 
-def extract_markdown_images(text: str) -> list[tuple[str, str]]:
-    return re.findall(r'!\[([\w\s]+)\]\(([^\)]+)\)', text)
+def split_nodes_image(nodes: list[TextNode]) -> list[TextNode]:
+    result: list[TextNode] = list()
+    for node in nodes:
+        if node.text_type != 'text':
+            result.append(node)
+            continue
+        prev_match: int = 0
+        for match in extract_markdown_images(node.text):
+            if match.start() > 0 and match.start() != prev_match:
+                result.append(TextNode(node.text[prev_match:match.start()], 'text'))
+            result.append(TextNode(match.groups()[0], 'image', match.groups()[1]))
+            prev_match = match.end()
+        if prev_match != len(node.text):
+            result.append(TextNode(node.text[prev_match:], 'text'))
+    return result
 
-def extract_markdown_links(text: str) -> list[tuple[str, str]]:
-    return re.findall(r'[^!]{0,1}\[([\w\s]+)\]\(([^\)]+)\)', text)
+def split_nodes_link(nodes: list[TextNode]) -> list[TextNode]:
+    result: list[TextNode] = list()
+    for node in nodes:
+        if node.text_type != 'text':
+            result.append(node)
+            continue
+        prev_match: int = 0
+        for match in extract_markdown_links(node.text):
+            if match.start() > 0 and match.start() != prev_match:
+                result.append(TextNode(node.text[prev_match:match.start()+1], 'text'))
+            result.append(TextNode(match.groups()[0], 'link', match.groups()[1]))
+            prev_match = match.end()
+        if prev_match != len(node.text):
+            result.append(TextNode(node.text[prev_match:], 'text'))
+    return result
+
+def extract_markdown_images(text: str) -> Iterator[re.Match]:
+    return re.finditer(r'!\[([\w\s]+)\]\(([^\)]+)\)', text)
+
+def extract_markdown_links(text: str) -> Iterator[re.Match]:
+    return re.finditer(r'[^!]{0,1}\[([\w\s]+)\]\(([^\)]+)\)', text)
